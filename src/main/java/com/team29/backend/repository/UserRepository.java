@@ -7,6 +7,5 @@ import com.team29.backend.model.User;
 //Repository is used to connect to the DB using an ID
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
-    Optional<User> findByUsername(String username);
     
 }

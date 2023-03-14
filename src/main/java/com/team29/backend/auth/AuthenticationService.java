@@ -5,11 +5,15 @@ import com.team29.backend.exception.UsernameTakenException;
 import com.team29.backend.model.Role;
 import com.team29.backend.model.User;
 import com.team29.backend.repository.UserRepository;
+
+import ch.qos.logback.core.util.Duration;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +26,9 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-  
+
+  @Value("${cookies.domain}")
+  private String domain;
  
   public AuthenticationResponse register(RegisterRequest request) {
   
@@ -31,13 +37,12 @@ public class AuthenticationService {
         throw new UsernameTakenException();
     }
     
-    if((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname())) || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getUsername())) || (StringUtils.isBlank(request.getEmail()))){
+    if((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname())) || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getEmail()))){
         throw new UserRegistrationDetailsMissingException();
     }
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
-        .username(request.getUsername())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(Role.USER)

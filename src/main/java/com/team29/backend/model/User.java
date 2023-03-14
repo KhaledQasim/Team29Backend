@@ -1,8 +1,13 @@
 package com.team29.backend.model;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity 
 // The 'Table' below is used to name the table that will be created in the DB, which this classes variables.
-@Table(name = "User")
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -33,9 +38,14 @@ public class User implements UserDetails {
     private Long id;
     private String firstname;
     private String lastname;
-    private String username;
     private String email;
     private String password;
+    private String ip;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant createdAt;
+   
 
     @Enumerated(EnumType.STRING)
     private Role role;

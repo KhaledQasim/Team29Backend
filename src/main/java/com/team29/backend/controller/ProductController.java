@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team29.backend.exception.ProductNotFoundException;
@@ -18,13 +19,14 @@ import com.team29.backend.repository.ProductRepository;
 
 @RestController
 // TO DO , place exact url of frontend server when ready to deploy
-@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
+@RequestMapping
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"}, allowCredentials = "true")
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
     
     
-    @PostMapping("/product")
+    @PostMapping("/api/product")
     Product newProduct(@RequestBody Product newProduct){
         return productRepository.save(newProduct);
     }
@@ -40,18 +42,25 @@ public class ProductController {
                 .orElseThrow(()->new ProductNotFoundException(id));
     }
 
-    @PutMapping("/product/{id}")
-    Product updateUser(@RequestBody Product newProduct,@PathVariable Long id){
+    @PutMapping("/api/product/{id}")
+    Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> {
                     product.setName(newProduct.getName());
                     product.setPrice(newProduct.getPrice());
                     product.setImage(newProduct.getImage());
+                    product.setImages(newProduct.getImages());
+                    product.setDescription(newProduct.getDescription());
+                    product.setCategory(newProduct.getCategory());
+                    product.setSize(newProduct.getSize());
+                    product.setQuantity(newProduct.getQuantity());
                     return productRepository.save(product);
-                }).orElseThrow(()->new ProductNotFoundException(id));
+                }).orElseThrow(() -> new ProductNotFoundException(id));
     }
+    
+  
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("api/product/{id}")
     String deleteUser(@PathVariable Long id){
         if(!productRepository.existsById(id)){
             throw new ProductNotFoundException(id);
